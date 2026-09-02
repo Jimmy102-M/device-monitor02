@@ -84,6 +84,10 @@ em { color: var(--sage); font-style: normal; }
 .contact-location { color: #b5c0bb; font-size: 13px; margin: 28px 0 0; }
 .email-link span { color: var(--accent); }
 .email-links { display: flex; flex-wrap: wrap; gap: 20px 32px; }
+.share-link-box { align-items: center; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; display: flex; gap: 12px; margin-top: 24px; max-width: 600px; padding: 12px 14px; }
+.share-link-box span { color: #dfe8e5; font-size: 12px; font-weight: 600; }
+.share-link-box input { background: transparent; border: 0; color: var(--paper); flex: 1; font: 500 13px var(--sans); outline: none; }
+.copy-link-btn { background: var(--accent); border: 0; border-radius: 8px; color: var(--ink); cursor: pointer; font: 700 11px var(--sans); padding: 8px 12px; }
 .site-footer { align-items: center; background: var(--ink); border-top: 1px solid #3d5054; color: #b5c0bb; display: flex; font-size: 11px; justify-content: space-between; padding: 23px 6vw; }
 .social-links { display: flex; gap: 20px; }
 .back-top { color: var(--accent); }

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://jimmymwangiinfo.com/sitemap.xml
+Sitemap: https://jimmy102-m.github.io/jimmymwangiifo/sitemap.xml
