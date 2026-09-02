@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sentinel // Security Copilot</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
+    :root {
+      --ink: #eaf0ee;
+      --muted: #83938f;
+      --dim: #52635f;
+      --line: rgba(178, 212, 200, .13);
+      --panel: #111a19;
+      --panel-2: #15211f;
+      --bg: #0b1211;
+      --mint: #a5f5d0;
+      --mint-2: #62d6ad;
+      --orange: #ffb86c;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: Manrope, sans-serif; min-height: 100vh; }
+    button, textarea { font: inherit; }
+    .app { display: grid; grid-template-columns: 250px 1fr 292px; min-height: 100vh; }
+    .sidebar, .rightbar { border-color: var(--line); background: #0e1716; }
+    .sidebar { border-right: 1px solid var(--line); padding: 26px 18px; display: flex; flex-direction: column; }
+    .brand { display: flex; align-items: center; gap: 10px; padding: 0 10px 33px; }
+    .brand-mark { width: 31px; height: 31px; border: 2px solid var(--mint-2); border-radius: 9px; position: relative; transform: rotate(45deg); }
+    .brand-mark:after { content: ""; position: absolute; inset: 7px; border: 1px solid var(--mint); border-radius: 4px; }
+    .brand-name { font: 500 15px 'DM Mono', monospace; letter-spacing: .08em; }
+    .eyebrow { color: var(--dim); font: 500 10px 'DM Mono', monospace; letter-spacing: .14em; text-transform: uppercase; }
+    nav { display: grid; gap: 6px; }
+    .nav-item { border: 1px solid transparent; color: var(--muted); background: transparent; border-radius: 8px; padding: 11px 12px; text-align: left; display: flex; gap: 11px; align-items: center; cursor: pointer; }
+    .nav-item:hover, .nav-item.active { background: rgba(165,245,208,.08); border-color: rgba(165,245,208,.1); color: var(--ink); }
+    .nav-item.active { color: var(--mint); }
+    .nav-icon { width: 18px; text-align: center; font-size: 15px; }
+    .side-section { margin: 31px 10px 10px; }
+    .workspace { margin-top: auto; border-top: 1px solid var(--line); padding: 20px 10px 0; }
+    .profile { display: flex; align-items: center; gap: 10px; font-size: 12px; }
+    .avatar { width: 29px; height: 29px; border-radius: 50%; background: #d39c76; color: #251913; display: grid; place-items: center; font-weight: 800; font-size: 10px; }
+    .profile small { display: block; color: var(--muted); margin-top: 2px; }
+    .main { padding: 30px 42px; max-width: 900px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; }
+    .topline { display: flex; justify-content: space-between; align-items: start; margin-bottom: 56px; }
+    h1 { font-size: 27px; letter-spacing: -.04em; margin: 9px 0 7px; }
+    .intro { color: var(--muted); font-size: 13px; margin: 0; }
+    .status { color: var(--mint); border: 1px solid rgba(165,245,208,.2); background: rgba(165,245,208,.06); border-radius: 20px; padding: 7px 10px; font: 500 10px 'DM Mono', monospace; }
+    .status i, .live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--mint-2); margin-right: 6px; box-shadow: 0 0 10px var(--mint-2); }
+    .hero { text-align: center; margin-bottom: 30px; }
+    .hero h2 { font-size: 34px; letter-spacing: -.06em; margin: 0 0 9px; }
+    .hero p { margin: 0 auto; max-width: 515px; color: var(--muted); font-size: 13px; line-height: 1.7; }
+    .terminal { width: 100%; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 13px; display: flex; align-items: end; gap: 10px; box-shadow: 0 20px 45px rgba(0,0,0,.18); }
+    textarea { color: var(--ink); background: transparent; border: 0; outline: 0; resize: none; min-height: 46px; flex: 1; padding: 8px 7px; font-size: 13px; line-height: 1.5; }
+    textarea::placeholder { color: #60716d; }
+    .send { border: 0; border-radius: 8px; width: 40px; height: 40px; cursor: pointer; background: var(--mint); color: #10201a; font-size: 18px; }
+    .send:hover { background: #d0ffe7; transform: translateY(-1px); }
+    .micro { display: flex; justify-content: space-between; color: var(--dim); font: 10px 'DM Mono', monospace; margin: 10px 5px 30px; }
+    .quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+    .quick { background: transparent; color: var(--muted); border: 1px solid var(--line); border-radius: 8px; padding: 13px 12px; text-align: left; cursor: pointer; min-height: 83px; }
+    .quick:hover { border-color: rgba(165,245,208,.4); background: rgba(165,245,208,.04); color: var(--ink); }
+    .quick strong { color: var(--ink); font-size: 12px; display: block; margin-bottom: 7px; }
+    .quick span { font-size: 11px; line-height: 1.45; display: block; }
+    .rightbar { border-left: 1px solid var(--line); padding: 29px 20px; }
+    .rightbar h3 { font-size: 13px; margin: 0 0 20px; }
+    .risk { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 17px; margin-bottom: 25px; }
+    .risk-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 17px; }
+    .risk-number { font-size: 25px; font-weight: 700; color: var(--mint); }
+    .risk-number small { color: var(--muted); font-size: 11px; font-weight: 400; }
+    .bar { height: 5px; border-radius: 5px; background: #263431; overflow: hidden; }
+    .bar b { display: block; width: 22%; height: 100%; background: var(--mint-2); border-radius: 5px; }
+    .risk p { color: var(--muted); font-size: 11px; margin: 12px 0 0; line-height: 1.5; }
+    .activity-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .activity-title span { color: var(--dim); font: 10px 'DM Mono', monospace; }
+    .activity { display: grid; gap: 15px; }
+    .event { display: grid; grid-template-columns: 8px 1fr; gap: 10px; }
+    .event-dot { width: 7px; height: 7px; margin-top: 5px; border-radius: 50%; background: var(--mint-2); }
+    .event-dot.orange { background: var(--orange); }
+    .event strong { display: block; font-size: 11px; font-weight: 600; }
+    .event small { color: var(--muted); font-size: 10px; line-height: 1.5; }
+    .ethics { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 20px; color: var(--muted); font-size: 10px; line-height: 1.6; }
+    .ethics strong { color: var(--mint); font: 10px 'DM Mono', monospace; display: block; margin-bottom: 7px; }
+    .response { display: none; background: var(--panel); border: 1px solid rgba(165,245,208,.25); border-radius: 10px; padding: 18px; margin-bottom: 12px; text-align: left; }
+    .response.show { display: block; }
+    .response strong { color: var(--mint); font-size: 12px; }
+    .response p { color: var(--muted); font-size: 12px; line-height: 1.6; margin: 8px 0 0; }
+    @media (max-width: 980px) { .app { grid-template-columns: 210px 1fr; } .rightbar { display: none; } .main { padding: 28px; } }
+    @media (max-width: 650px) { .app { display: block; } .sidebar { display: none; } .main { padding: 24px 17px; } .topline { margin-bottom: 35px; } .quick-grid { grid-template-columns: 1fr; } .hero h2 { font-size: 29px; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark"></span><span class="brand-name">SENTINEL</span></div>
+      <div class="eyebrow side-section">Workspace</div>
+      <nav>
+        <button class="nav-item active"><span class="nav-icon">⌁</span> Copilot</button>
+        <button class="nav-item"><span class="nav-icon">◌</span> Assessments</button>
+        <button class="nav-item"><span class="nav-icon">▣</span> Knowledge base</button>
+      </nav>
+      <div class="eyebrow side-section">Manage</div>
+      <nav>
+        <button class="nav-item"><span class="nav-icon">⚙</span> Settings</button>
+        <button class="nav-item"><span class="nav-icon">?</span> Help center</button>
+      </nav>
+      <div class="workspace">
+        <div class="eyebrow" style="margin-bottom:12px">Active workspace</div>
+        <div class="profile"><div class="avatar">AS</div><div><b>Acme Security</b><small>Personal workspace</small></div></div>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="topline">
+        <div><div class="eyebrow">Security operations / 01</div><h1>Good morning, Alex.</h1><p class="intro">Your ethical security copilot is ready.</p></div>
+        <div class="status"><i></i> SYSTEMS NOMINAL</div>
+      </header>
+      <section class="hero">
+        <div class="eyebrow">Ask Sentinel</div>
+        <h2>What are we securing today?</h2>
+        <p>Investigate signals, harden your systems, and learn responsibly. Sentinel helps you move from uncertainty to a clear, defensive next step.</p>
+      </section>
+      <div id="response" class="response"><strong>Sentinel's defensive guidance</strong><p id="responseText"></p></div>
+      <form class="terminal" id="chatForm">
+        <textarea id="prompt" rows="2" placeholder="Describe a security concern, log, or system you want to protect..." aria-label="Security question"></textarea>
+        <button class="send" aria-label="Send question">↗</button>
+      </form>
+      <div class="micro"><span>ENTER to send · SHIFT + ENTER for new line</span><span>ENCRYPTED SESSION</span></div>
+      <div class="quick-grid">
+        <button class="quick" data-prompt="Help me triage a suspicious login alert"><strong>⌁ Triage an alert</strong><span>Understand suspicious activity and prioritize response.</span></button>
+        <button class="quick" data-prompt="Create a secure web application checklist"><strong>◇ Harden an application</strong><span>Build a practical checklist for your next release.</span></button>
+        <button class="quick" data-prompt="Explain how to safely run an authorized port scan"><strong>▧ Learn a concept</strong><span>Explore ethical techniques in a safe lab.</span></button>
+      </div>
+    </main>
+    <aside class="rightbar">
+      <h3>Security posture</h3>
+      <div class="risk">
+        <div class="risk-head"><span class="eyebrow">Overall risk</span><div class="risk-number">Low <small>2.2 / 10</small></div></div>
+        <div class="bar"><b></b></div>
+        <p>Based on your latest assessment. No critical issues detected.</p>
+      </div>
+      <div class="activity-title"><h3>Recent activity</h3><span>VIEW ALL →</span></div>
+      <div class="activity">
+        <div class="event"><i class="event-dot"></i><div><strong>Weekly posture scan</strong><small>Completed · 12 minutes ago</small></div></div>
+        <div class="event"><i class="event-dot orange"></i><div><strong>New advisory matched</strong><small>CVE-2025-2187 · 2 hours ago</small></div></div>
+        <div class="event"><i class="event-dot"></i><div><strong>Access review exported</strong><small>PDF report · Yesterday</small></div></div>
+      </div>
+      <div class="ethics"><strong>✦ BUILT FOR DEFENSE</strong>Use Sentinel only on systems you own or have explicit permission to test. We won't help cause harm, evade detection, or access data without authorization.</div>
+    </aside>
+  </div>
+  <script>
+    const form = document.querySelector('#chatForm');
+    const prompt = document.querySelector('#prompt');
+    const response = document.querySelector('#response');
+    const responseText = document.querySelector('#responseText');
+    const safeReply = (question) => {
+      const lower = question.toLowerCase();
+      if (lower.includes('port scan')) return 'For an authorized lab, define the target and scope first, then use a low-impact scan profile and document each finding. I can help you create a permission checklist, interpret results, and turn exposed services into remediation tasks.';
+      if (lower.includes('login') || lower.includes('alert')) return 'Start by preserving the alert and authentication logs, then verify the user, source location, device, and MFA outcome. Contain only with an approved playbook, rotate affected credentials, and record the timeline for review.';
+      return 'I can help with defensive analysis, secure configuration, incident triage, threat modeling, and authorized lab exercises. Share the system context and your goal, while removing secrets or personal data, and I’ll suggest a safe next step.';
+    };
+    function submitQuestion(value) {
+      const clean = value.trim();
+      if (!clean) return;
+      responseText.textContent = safeReply(clean);
+      response.classList.add('show');
+      response.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    form.addEventListener('submit', (event) => { event.preventDefault(); submitQuestion(prompt.value); });
+    prompt.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); form.requestSubmit(); }
+    });
+    document.querySelectorAll('.quick').forEach((button) => {
+      button.addEventListener('click', () => { prompt.value = button.dataset.prompt; submitQuestion(prompt.value); });
+    });
+    document.querySelectorAll('.nav-item').forEach((button) => button.addEventListener('click', () => {
+      document.querySelector('.nav-item.active').classList.remove('active'); button.classList.add('active');
+    }));
+  </script>
+</body>
+</html>
