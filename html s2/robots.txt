@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Replace YOUR_PUBLIC_DOMAIN before publishing.
+Sitemap: https://YOUR_PUBLIC_DOMAIN/sitemap.xml

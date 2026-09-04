@@ -1,0 +1,9 @@
+{
+  "name": "pulseboard",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Official social publishing and insights workspace",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
