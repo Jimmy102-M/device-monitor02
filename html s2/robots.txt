@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
 
-# Replace YOUR_PUBLIC_DOMAIN before publishing.
+# Replace YOUR_PUBLIC_DOMAIN with the real HTTPS domain before publishing.
 Sitemap: https://YOUR_PUBLIC_DOMAIN/sitemap.xml

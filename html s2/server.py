@@ -2,8 +2,10 @@ import os
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlencode
 
-PORT = int(os.environ.get("PORT", "4174"))
+PORT = int(os.environ.get("PORT", "4173"))
+HOST = os.environ.get("HOST", "0.0.0.0")
 PUBLIC_URL = os.environ.get("PUBLIC_URL", f"http://localhost:{PORT}")
+DEMO_MODE = os.environ.get("DEMO_MODE", "1").lower() in {"1", "true", "yes"}
 
 
 class PulseboardHandler(SimpleHTTPRequestHandler):
@@ -13,6 +15,7 @@ class PulseboardHandler(SimpleHTTPRequestHandler):
                 "meta": bool(os.environ.get("META_APP_ID") and os.environ.get("META_APP_SECRET")),
                 "tiktok": bool(os.environ.get("TIKTOK_CLIENT_KEY") and os.environ.get("TIKTOK_CLIENT_SECRET")),
                 "mode": "official-api",
+                "demo": DEMO_MODE,
             })
 
         if self.path == "/auth/meta":
@@ -64,6 +67,6 @@ class PulseboardHandler(SimpleHTTPRequestHandler):
 
 if __name__ == "__main__":
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
-    server = ThreadingHTTPServer(("localhost", PORT), PulseboardHandler)
-    print(f"Pulseboard running at {PUBLIC_URL}")
+    server = ThreadingHTTPServer((HOST, PORT), PulseboardHandler)
+    print(f"Traceboard running at {PUBLIC_URL} on {HOST}:{PORT}")
     server.serve_forever()
